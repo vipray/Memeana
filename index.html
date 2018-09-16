@@ -73,7 +73,8 @@ p {
 li {
   list-style-type: none;
   text-align: left;
-  background-color: transparent;
+  background-color: white;
+  color:black;    
   margin: 10px 5px;
   padding: 5px 10px;
   font-family: 'Space Mono', monospace;
@@ -234,62 +235,19 @@ canvas{
 <script>
 // Creating questionss and answers
 //*****************************************************************************
-alert("obj.question2");
-$.getJSON("{{ url_for('static', filename='result.json) }}",function(json){
-  //console.log(json);
-  alert(json.a);
-});
-
-var question1 = {
-  question: "<img src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRjM9_Y8yPvYhciDtGCBikSgCCRH5Zfw_hH2J0nCygZ0ay39pCK'/>",
-  answers: ["Hyper Text Markup Language", "HyperLinks and Text Markup Language", "Home Tool Markup Language"],
-  correct: 0 };
-
-
-var question2 = {
-  question: "<img src='https://www.todaysparent.com/wp-content/uploads/2017/06/when-your-kid-becomes-a-meme-1024x576-1497986561.jpg'/>",
-  answers: ['6', '9', '12', '3'],
-  correct: 2 };
-
-
-var question3 = {
-  question: "<img src='https://scontent-bom1-1.xx.fbcdn.net/v/t1.0-9/41719196_1887041921405148_350655221833138176_o.jpg?_nc_cat=1&oh=ed6bce916c2fd3184d905544a1590b9e&oe=5C31DEC8'/>",
-  answers: ['Colorful Style Sheets', 'Cascading Style Sheets', 'Creative Style Sheets', 'Computer Style Sheets'],
-  correct: 1 };
-
-
-var question4 = {
-  question: "Which property is used to change the background color?",
-  answers: ["bgcolor", "color", "background-color"],
-  correct: 2 };
-
-
-var question5 = {
-  question: "Javasctipt is the same as Java?",
-  answers: ["True", "False"],
-  correct: 1 };
-
-
-var question6 = {
-  question: "Which event occurs when the user clicks on an HTML element?",
-  answers: ["onchange", "onmouseclick", "onmouseover", "onclick"],
-  correct: 3 };
-
-
-var question7 = {
-  question: "Is JavaScript case-sensitive?",
-  answers: ["True", "False"],
-  correct: 0 };
-
-
-// create an array of objects
-
-var questions = [question1, question2, question3, question4, question5, question6, question7];
-
-// Initialize variables
-//------------------------------------------------------------------
-
-var tags;
+   var questions=[]; 
+$.getJSON("result.json", function(json){
+//alert(json.a.length);    
+    for(var i=0;i<json.a.length;i++){
+        questions[i]={
+            question:  "<img src='"+json.a[i].question+"'/>",
+            answers:[json.a[i].answers[0],json.a[i].answers[1],json.a[i].answers[2],json.a[i].answers[3]],
+            correct: json.a[i].correct
+        };
+    }
+    //alert("ghfg"+questions.length);
+}).done(function(){
+    var tags;
 var tagsClass = '';
 var liTagsid = [];
 var correctAns = 0;
@@ -330,6 +288,7 @@ function showQuestions() {
 
   //Display Results in the final page
   if (currentIndex == questions.length) {
+      //alert(questions.length);
     ulTag.innerHTML = '';
     document.getElementById('question').innerHTML = '';
 
@@ -339,6 +298,7 @@ function showQuestions() {
   }
      
   questionTitle.innerHTML = currentQuestion.question;
+   // alert(currentQuestion.question);
   console.log(currentQuestion.question);
   $("#display-area").fadeIn("slow");  
 
@@ -471,23 +431,41 @@ function showResults() {
   newScore.appendChild(textScore);
   addHere.appendChild(newScore);
 
-  //use jquary to grab the text of the score
+  //use jquery to grab the text of the score
   var score = $(".score").text();
 
   //fill the circle in base of the score
   $(".fill").css("height", score);
 
-  if (correctAns >= 5) {
+  if (correctAns >= 10) {
+   
     var newCongrats = document.createElement('p');
     var textCongrats = document.createTextNode('Congratulations! You did a Good Job!');
     newCongrats.appendChild(textCongrats);
     document.getElementById('display-area').appendChild(newCongrats);
-
-    confettiEffect();
+    mySound = new sound("claps.mp3");
+      mySound.play(); 
+    setTimeout(confettiEffect(),3000);
   }
 
 }
 
+    
+function sound(src) {
+    this.sound = document.createElement("audio");
+    this.sound.src = src;
+    this.sound.setAttribute("preload", "auto");
+    this.sound.setAttribute("controls", "none");
+    this.sound.style.display = "none";
+    document.body.appendChild(this.sound);
+    this.play = function(){
+        this.sound.play();
+    }
+    this.stop = function(){
+        this.sound.pause();
+    }
+}    
+    
 // Confetti Effect by Gtibo "Confetti Party"
 //------------------------------------------------------------------
 function confettiEffect() {
@@ -624,6 +602,7 @@ function confettiEffect() {
 
   }
 }
-//# sourceURL=pen.js
+
+});
 </script>
 </body></html>
